@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!--配置全局属性-->
+    <settings>
+        <!--使用 jdbc 的 getGeneratekeys 获取自增主键值-->
+        <!--允许使用自定义的主键值(比如由程序生成的UUID 32位编码作为键值)，数据表的PK生成策略将被覆盖-->
+        <setting name="useGeneratedKeys" value="true"/>
+        <!--使用列别名替换别名　　默认true
+        select name as title form table;-->
+        <setting name="useColumnLabel" value="true"/>
+        <!--开启驼峰命名转换Table:create_time到 Entity(createTime)-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+
+        <!--mybatis缓存默认开启-->
+        <setting name="cacheEnabled" value="true"></setting>
+        <!-- 查询时，关闭关联对象即时加载以提高性能 默认积极加载-->
+        <setting name="lazyLoadingEnabled" value="false"></setting>
+
+        <!-- 设置关联对象加载的形态，此处为按需加载字段(加载字段由SQL指定)，不会加载关联表的所有字段，以提高性能 -->
+        <setting name="aggressiveLazyLoading" value="true"></setting>
+        <!-- 对于未知的SQL查询，允许返回不同的结果集以达到通用的效果 -->
+        <setting name="multipleResultSetsEnabled" value="true"></setting>
+
+
+        <!-- 给予被嵌套的resultMap以字段-属性的映射支持 -->
+        <setting name="autoMappingBehavior" value="FULL"></setting>
+        <!-- 对于批量更新操作缓存SQL以提高性能 -->
+        <setting name="defaultExecutorType" value="BATCH"></setting>
+        <!-- 数据库超过25000秒仍未响应则超时 -->
+        <setting name="defaultStatementTimeout" value="25000"></setting>
+    </settings>
+
+</configuration>
