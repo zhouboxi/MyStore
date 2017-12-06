@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.jxlg.app.dao.ShippingMapper" >
-  <resultMap id="BaseResultMap" type="com.jxlg.app.entity.Shipping" >
+<mapper namespace="com.jxlg.app.store.dao.ShippingMapper" >
+  <resultMap id="BaseResultMap" type="com.jxlg.app.store.entity.Shipping" >
     <constructor >
       <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
@@ -31,7 +31,7 @@
     delete from mmall_shipping
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.jxlg.app.entity.Shipping" >
+  <insert id="insert" parameterType="com.jxlg.app.store.entity.Shipping" useGeneratedKeys="true" keyProperty="id">
     insert into mmall_shipping (id, user_id, receiver_name, 
       receiver_phone, receiver_mobile, receiver_province, 
       receiver_city, receiver_district, receiver_address, 
@@ -43,7 +43,7 @@
       #{receiverZip,jdbcType=VARCHAR},now(), now()
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.jxlg.app.entity.Shipping" >
+  <insert id="insertSelective" parameterType="com.jxlg.app.store.entity.Shipping" >
     insert into mmall_shipping
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -122,7 +122,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.jxlg.app.entity.Shipping" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.jxlg.app.store.entity.Shipping" >
     update mmall_shipping
     <set >
       <if test="userId != null" >
@@ -161,7 +161,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.jxlg.app.entity.Shipping" >
+  <update id="updateByPrimaryKey" parameterType="com.jxlg.app.store.entity.Shipping" >
     update mmall_shipping
     set user_id = #{userId,jdbcType=INTEGER},
       receiver_name = #{receiverName,jdbcType=VARCHAR},
@@ -176,4 +176,61 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <delete id="delete" parameterType="map">
+    delete from mmall_shipping
+    where user_id=#{userId}
+    and id=#{addressId}
+  </delete>
+
+  <update id="update" parameterType="com.jxlg.app.store.entity.Shipping" >
+    update mmall_shipping
+    <set >
+      <if test="receiverName != null" >
+        receiver_name = #{receiverName,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverPhone != null" >
+        receiver_phone = #{receiverPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverMobile != null" >
+        receiver_mobile = #{receiverMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverProvince != null" >
+        receiver_province = #{receiverProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverCity != null" >
+        receiver_city = #{receiverCity,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverDistrict != null" >
+        receiver_district = #{receiverDistrict,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverAddress != null" >
+        receiver_address = #{receiverAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverZip != null" >
+        receiver_zip = #{receiverZip,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime == null" >
+        update_time = now(),
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+    and user_id = #{userId,jdbcType=INTEGER}
+  </update>
+
+  <select id="findOne" parameterType="map" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    from mmall_shipping
+    where user_id=#{userId}
+    and id=#{addressId}
+  </select>
+
+  <select id="list" parameterType="int" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    from mmall_shipping
+    where user_id=#{userId}
+  </select>
 </mapper>

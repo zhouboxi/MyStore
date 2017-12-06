@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
 	<context:annotation-config/>
-	<context:component-scan base-package="com.jxlg.app.controller"/>
+	<context:component-scan base-package="com.jxlg.app.store.controller"/>
 
 
 	<!-- springMVC注解支持 -->
@@ -25,7 +25,7 @@
 	
 	
 	
-	<bean id="dateUtil" class="com.jxlg.app.util.DateUtil"></bean>
+	<bean id="dateUtil" class="com.jxlg.app.store.util.DateUtil"></bean>
 	
 	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
 		<property name="converters" ref="dateUtil"></property>

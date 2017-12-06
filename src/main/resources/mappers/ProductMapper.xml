@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.jxlg.app.dao.ProductMapper" >
-  <resultMap id="BaseResultMap" type="com.jxlg.app.entity.Product" >
+<mapper namespace="com.jxlg.app.store.dao.ProductMapper" >
+  <resultMap id="BaseResultMap" type="com.jxlg.app.store.entity.Product" >
     <constructor >
       <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="category_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
@@ -16,7 +16,7 @@
       <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
     </constructor>
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.jxlg.app.entity.Product" >
+  <resultMap id="ResultMapWithBLOBs" type="com.jxlg.app.store.entity.Product" >
     <constructor >
       <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="category_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
@@ -51,7 +51,7 @@
     delete from mmall_product
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.jxlg.app.entity.Product" >
+  <insert id="insert" parameterType="com.jxlg.app.store.entity.Product" >
     insert into mmall_product (id, category_id, name, 
       subtitle, main_image, detail, 
       price, stock, status, 
@@ -63,7 +63,7 @@
       now(), now(), #{sunImages,jdbcType=LONGVARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.jxlg.app.entity.Product" >
+  <insert id="insertSelective" parameterType="com.jxlg.app.store.entity.Product" >
     insert into mmall_product
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -142,7 +142,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.jxlg.app.entity.Product" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.jxlg.app.store.entity.Product" >
     update mmall_product
     <set >
       <if test="categoryId != null" >
@@ -172,7 +172,7 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
+      <if test="updateTime == null" >
         update_time = now(),
       </if>
       <if test="sunImages != null" >
@@ -181,7 +181,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.jxlg.app.entity.Product" >
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.jxlg.app.store.entity.Product" >
     update mmall_product
     set category_id = #{categoryId,jdbcType=INTEGER},
       name = #{name,jdbcType=VARCHAR},
@@ -196,7 +196,7 @@
       sun_images = #{sunImages,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.jxlg.app.entity.Product" >
+  <update id="updateByPrimaryKey" parameterType="com.jxlg.app.store.entity.Product" >
     update mmall_product
     set category_id = #{categoryId,jdbcType=INTEGER},
       name = #{name,jdbcType=VARCHAR},
@@ -210,4 +210,43 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="findAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mmall_product ORDER BY id ASC
+  </select>
+
+  <select id="findByNameAndId" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mmall_product
+    <where>
+      <if test="productName!=null">
+        and name LIKE #{productName}
+      </if>
+      <if test="productId!=null">
+        and id=#{productId}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectByNameAndCategoryIds" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+
+    from mmall_product
+    <where>
+      <if test="productName!=null">
+        and NAME like #{productName}
+      </if>
+      <if test="categoryIdList!=null">
+        and category_id IN
+        <foreach item="item" collection="categoryIdList" open="(" separator=","
+                 close=")">
+          #{item}
+        </foreach>
+      </if>
+    </where>
+  </select>
 </mapper>

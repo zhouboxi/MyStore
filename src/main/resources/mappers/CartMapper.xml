@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.jxlg.app.dao.CartMapper" >
-  <resultMap id="BaseResultMap" type="com.jxlg.app.entity.Cart" >
+<mapper namespace="com.jxlg.app.store.dao.CartMapper" >
+  <resultMap id="BaseResultMap" type="com.jxlg.app.store.entity.Cart" >
     <constructor >
       <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
@@ -25,7 +25,7 @@
     delete from mmall_cart
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.jxlg.app.entity.Cart" >
+  <insert id="insert" parameterType="com.jxlg.app.store.entity.Cart" >
     insert into mmall_cart (id, user_id, product_id, 
       quantity, checked, create_time, 
       update_time)
@@ -33,7 +33,7 @@
       #{quantity,jdbcType=INTEGER}, #{checked,jdbcType=INTEGER},now(),
       now())
   </insert>
-  <insert id="insertSelective" parameterType="com.jxlg.app.entity.Cart" >
+  <insert id="insertSelective" parameterType="com.jxlg.app.store.entity.Cart" >
     insert into mmall_cart
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -82,7 +82,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.jxlg.app.entity.Cart" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.jxlg.app.store.entity.Cart" >
     update mmall_cart
     <set >
       <if test="userId != null" >
@@ -106,7 +106,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.jxlg.app.entity.Cart" >
+  <update id="updateByPrimaryKey" parameterType="com.jxlg.app.store.entity.Cart" >
     update mmall_cart
     set user_id = #{userId,jdbcType=INTEGER},
       product_id = #{productId,jdbcType=INTEGER},
@@ -116,4 +116,52 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="checkCart" parameterType="map" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM mmall_cart
+    where user_id=#{userId}
+    and product_id=#{productId}
+  </select>
+
+  <delete id="delete" parameterType="map">
+    DELETE  from mmall_cart
+    where user_id=#{userId}
+    and product_id IN
+    <foreach collection="productIds" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </delete>
+
+  <select id="findByUserId" parameterType="int" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from mmall_cart
+    where user_id=#{userId}
+  </select>
+
+  <select id="selectCartProductCheckedStatusByUserId" resultType="int" parameterType="int">
+    SELECT  count(1) from mmall_cart where checked = 0 and user_id = #{userId}
+  </select>
+
+
+  <update id="checkedOrUncheckedProduct" parameterType="map">
+    update mmall_cart
+    set checked=#{checked},
+    update_time=now()
+    where user_id=#{userId}
+    <if test="productId!=null">
+      and product_id=#{productId}
+    </if>
+  </update>
+
+  <select id="selectCartProductCount" parameterType="int" resultType="int">
+    select IFNULL(sum(quantity),0) as count from mmall_cart where user_id = #{userId}
+  </select>
+
+  <select id="selectCheckedCartByUserId" parameterType="int" resultMap="BaseResultMap">
+    SELECT  <include refid="Base_Column_List"/>
+    from mmall_cart
+    where user_id=#{userId}
+    and checked=1
+  </select>
 </mapper>
